@@ -1,8 +1,6 @@
 package com.example.android.donutapp;
 
-import static com.example.android.donutapp.DonutDB.BatterEntry.BATTER_CREATE;
 import static com.example.android.donutapp.DonutDB.DonutEntry.DONUT_CREATE;
-import static com.example.android.donutapp.DonutDB.ToppingEntry.TOPPING_CREATE;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -37,15 +35,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DONUT_CREATE);
-        db.execSQL(BATTER_CREATE);
-        db.execSQL(TOPPING_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DonutDB.DonutEntry._DELETE);
-        db.execSQL(DonutDB.BatterEntry._DELETE);
-        db.execSQL(DonutDB.ToppingEntry._DELETE);
         onCreate(db);
     }
 

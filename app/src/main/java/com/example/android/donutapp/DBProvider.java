@@ -9,9 +9,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by leewoonho on 2017. 1. 18..
@@ -79,7 +81,14 @@ public class DBProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        this.mValues = values;
+
+        Log.d(TAG, "insert() was called");
+
+        List<String> reqValue = uri.getPathSegments();
+
+//        if(reqValue.size()>0) {
+//            String
+//        }
 
         db = mOpenHelper.getWritableDatabase();    // 자동으로 SQLiteOpenHelper.onCreate() 메서드를 호출한다
         return null;

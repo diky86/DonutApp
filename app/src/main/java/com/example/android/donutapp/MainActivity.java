@@ -22,8 +22,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<DonutsDao> mStringArr = new ArrayList<>();
     private ContentResolver cr;
     private String URL = "content://com.example.android.donutapp/donut";
+    private ArrayList<String> mJsonArr = new ArrayList<>();
 
 
     @Override
@@ -66,7 +70,9 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         json = loadJSONFromAsset();
-        jsonToJava();
+
+//        jsonToJava();
+//        jsonToJava2();
 
         //DB Access를 위한 인스턴스화
         mDbOpenHelper = new DbOpenHelper(this);
@@ -134,25 +140,25 @@ public class MainActivity extends AppCompatActivity
             values_donut.put(DonutDB.DonutEntry.NAME, donutList.get(i).name);
             values_donut.put(DonutDB.DonutEntry.PPU, donutList.get(i).ppu);
 
-            for (int j = 0 ; j < donutList.get(i).batters.batter.size() ; j++) {
-                values_batter.put(DonutDB.BatterEntry.B_ID, donutList.get(i).batters.batter.get(j).id);
-                values_batter.put(DonutDB.BatterEntry.B_TYPE, donutList.get(i).batters.batter.get(j).type);
-                values_batter.put(DonutDB.BatterEntry.D_ID, donutList.get(i).id);
-
-                mSQLiteDatabase.insert(DonutDB.BatterEntry._TABLE_NAME, null, values_batter);
-            }
-
-            for (int k = 0 ; k < donutList.get(i).topping.size() ; k++) {
-                values_topping.put(DonutDB.ToppingEntry.T_ID, donutList.get(i).topping.get(k).id);
-                values_topping.put(DonutDB.ToppingEntry.T_TYPE, donutList.get(i).topping.get(k).type);
-                values_topping.put(DonutDB.ToppingEntry.D_ID, donutList.get(i).id);
-
-                mSQLiteDatabase.insert(DonutDB.ToppingEntry._TABLE_NAME, null, values_topping);
-            }
+//            for (int j = 0 ; j < donutList.get(i).batters.batter.size() ; j++) {
+//                values_batter.put(DonutDB.BatterEntry.B_ID, donutList.get(i).batters.batter.get(j).id);
+//                values_batter.put(DonutDB.BatterEntry.B_TYPE, donutList.get(i).batters.batter.get(j).type);
+//                values_batter.put(DonutDB.BatterEntry.D_ID, donutList.get(i).id);
+//
+//                mSQLiteDatabase.insert(DonutDB.BatterEntry._TABLE_NAME, null, values_batter);
+//            }
+//
+//            for (int k = 0 ; k < donutList.get(i).topping.size() ; k++) {
+//                values_topping.put(DonutDB.ToppingEntry.T_ID, donutList.get(i).topping.get(k).id);
+//                values_topping.put(DonutDB.ToppingEntry.T_TYPE, donutList.get(i).topping.get(k).type);
+//                values_topping.put(DonutDB.ToppingEntry.D_ID, donutList.get(i).id);
+//
+//                mSQLiteDatabase.insert(DonutDB.ToppingEntry._TABLE_NAME, null, values_topping);
+//            }
             mSQLiteDatabase.insert(DonutDB.DonutEntry._TABLE_NAME, null, values_donut);
 
         }
-        Toast.makeText(getApplicationContext(), "insert 완료", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "insert 완료", Toast.LENGTH_SHORT).show();
 
         /*
         db 확인
@@ -213,6 +219,8 @@ public class MainActivity extends AppCompatActivity
             is.read(buffer);
             is.close();
             json = new String(buffer, "UTF-8");
+            jsonToJava(json);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -224,8 +232,7 @@ public class MainActivity extends AppCompatActivity
     [반복] JsonObject/JsonArray로 원하는 노드 검색
     Gson으로 DAO객체 생성
      */
-    public void jsonToJava() {
-        Log.d(TAG, "josn print = " + json);
+    public void jsonToJava1() {
 
         JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
         Log.d(TAG, "jsonArray = " + jsonArray);
@@ -258,6 +265,29 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    public void jsonToJava(String json) {
+        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("donut");
+        Log.d(TAG, "jsonArray = " + jsonArray);
+        ContentValues values = new ContentValues();
+
+        for(int i=0; i<jsonArray.size(); i++) {
+            JsonObject obj = (JsonObject) jsonArray.get(i);
+            JsonElement id = obj.get("id");
+            values.put(DonutDB.DonutEntry.ID, "id");
+            values.put(DonutDB.DonutEntry.TYPE, "type");
+            values.put(DonutDB.DonutEntry.NAME, "name");
+            values.put(DonutDB.DonutEntry.PPU, "ppu");
+            mSQLiteDatabase.insert(DonutDB.DonutEntry._TABLE_NAME, null, values);
+            Log.d(TAG, "values = " + values.size());
+
+//
+//
+//            String _id = obj.getAsString();
+//            JsonElement jid = (JsonElement)obj.get("id");
+//            String id = jid.getAsString();
+        }
+    }
 
 
     @Override
