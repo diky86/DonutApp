@@ -1,6 +1,8 @@
 package com.example.android.donutapp;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,33 +19,20 @@ import java.util.ArrayList;
 public class CakeAdapter extends RecyclerView.Adapter<CakeAdapter.ViewHolder> {
 
     protected static final String TAG = "CakeAdapter";
-    private ArrayList<DonutsDao> mDataSet;
-    private int itemLayout;
-    Context context;
+    private Context mContext;
+    private Cursor mCursor;
 
-    public CakeAdapter(ArrayList<DonutsDao> searchDataSet, int itemLayout) {
-        this.mDataSet = searchDataSet;
-        this.itemLayout = itemLayout;
-    }
-
-    public CakeAdapter(ArrayList<DonutsDao> searchDataSet) {
-        mDataSet = searchDataSet;
-    }
-
-    public CakeAdapter(ArrayList<DonutsDao> searchDataSet, Context context, int itemLayout) {
-        this.mDataSet = searchDataSet;
-        this.context = context;
-        this.itemLayout = itemLayout;
+    public CakeAdapter(Context context, Cursor cursor) {
+        mContext = context;
+        mCursor = cursor;
     }
 
     // Create new views (invoked by the layout manager)
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        Log.d(TAG, "Create Success!!");
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.donut_item, parent, false);
         ViewHolder vh = new ViewHolder(v);
-
         return vh;
     }
 
@@ -52,19 +41,16 @@ public class CakeAdapter extends RecyclerView.Adapter<CakeAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        Log.d(TAG, "mIdView = " + mDataSet.get(position).id);
-        holder.mIdView.setText("id = " + mDataSet.get(position).id);
-        holder.mTypeView.setText("type = " + mDataSet.get(position).type);
-        holder.mNameView.setText("name = " + mDataSet.get(position).name);
-        holder.mPpuView.setText("ppu = " + mDataSet.get(position).ppu);
-//        holder.mBatterView.setText(mDataSet.get(position).batters.batter.get(position).id);
-//        holder.mToppingView.setText(mDataSet.get(position).topping.toString());
+        mCursor.moveToPosition(position);
+        holder.mIdView.setText("ID = " + mCursor.getString(mCursor.getColumnIndex("id")));
+        holder.mTypeView.setText("TYPE = " + mCursor.getString(mCursor.getColumnIndex("type")));
+        holder.mNameView.setText("NAME = " + mCursor.getString(mCursor.getColumnIndex("name")));
+        holder.mPpuView.setText("PPU = " + mCursor.getString(mCursor.getColumnIndex("ppu")));
     }
 
     @Override
     public int getItemCount() {
-        Log.d(TAG, "mDataSet Size = " + mDataSet.size());
-        return mDataSet.size();
+        return mCursor.getCount();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -73,19 +59,14 @@ public class CakeAdapter extends RecyclerView.Adapter<CakeAdapter.ViewHolder> {
         public TextView mTypeView;
         public TextView mNameView;
         public TextView mPpuView;
-        public TextView mBatterView;
-        public TextView mToppingView;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            Log.d(TAG, "ViewHolder Success ");
-            mIdView = (TextView) itemView.findViewById(R.id.textview_id);
-            mTypeView = (TextView) itemView.findViewById(R.id.textview_type);
-            mNameView = (TextView) itemView.findViewById(R.id.textview_name);
-            mPpuView = (TextView) itemView.findViewById(R.id.textview_ppu);
-//            mBatterView = (TextView) itemView.findViewById(R.id.textview_batter);
-//            mToppingView = (TextView) itemView.findViewById(R.id.textview_tooping);
+            mIdView = (TextView) itemView.findViewById(R.id.item_view_id);
+            mTypeView = (TextView) itemView.findViewById(R.id.item_view_type);
+            mNameView = (TextView) itemView.findViewById(R.id.item_view_name);
+            mPpuView = (TextView) itemView.findViewById(R.id.item_view_ppu);
+
         }
     }
-
 }

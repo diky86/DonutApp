@@ -79,12 +79,6 @@ public class RaisedAdapter extends RecyclerView.Adapter<RaisedAdapter.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
             Log.d(TAG, "ViewHolder Success ");
-            mIdView = (TextView) itemView.findViewById(R.id.textview_id);
-            mTypeView = (TextView) itemView.findViewById(R.id.textview_type);
-            mNameView = (TextView) itemView.findViewById(R.id.textview_name);
-            mPpuView = (TextView) itemView.findViewById(R.id.textview_ppu);
-//            mBatterView = (TextView) itemView.findViewById(R.id.textview_batter);
-//            mToppingView = (TextView) itemView.findViewById(R.id.textview_tooping);
         }
     }
 

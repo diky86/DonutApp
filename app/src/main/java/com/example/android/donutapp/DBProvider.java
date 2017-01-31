@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -22,51 +23,26 @@ import java.util.List;
 public class DBProvider extends ContentProvider {
 
     protected static final String TAG = "DBProvider";
-    private static final String DATABASE_NAME = "dunut";
+    private static final String DATABASE_NAME = "donuts";
     private static final int DATABASE_VERSION = 1;
     private static final String AUTHORITY = "com.example.android.DONUTAPP";
-    private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "donut");
-    private static UriMatcher sUriMatcher;
+    private static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     private SQLiteDatabase db;
-    private ContentValues mValues;
     private Context context;
     private DbOpenHelper mOpenHelper;
 
-    static {
-        sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        sUriMatcher.addURI(AUTHORITY, "donut", 1);
-    }
-
-    private static final String[] mProjection = new String[] {
-            DonutDB.DonutEntry._ID,
-            DonutDB.DonutEntry.ID,
-            DonutDB.DonutEntry.TYPE,
-            DonutDB.DonutEntry.NAME,
-            DonutDB.DonutEntry.PPU
-    };
-
-    private static final String mSelectionClause = null;
-    private static final String[] mSelectionArgs = {};
-
-    //Provider 생성 시 호출
-    //되도록 빠르게 실행되는 초기화만 수행하는게 좋다
     @Override
     public boolean onCreate() {
-
-        //db 설정
         context = getContext();
-        mOpenHelper = new DbOpenHelper(
-                getContext()
-        );
+        mOpenHelper = new DbOpenHelper(context);
         return true;
     }
 
-    //타앱에서 쿼리를 사용할수 있도록 지정
     @Nullable
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
-        Cursor c = db.query(DonutDB.DonutEntry._TABLE_NAME, null, selection, selectionArgs, null
+        Cursor c = db.query(DATABASE_NAME, projection, selection, selectionArgs, null
         , null, sortOrder);
 
         return c;
@@ -81,36 +57,24 @@ public class DBProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-
         Log.d(TAG, "insert() was called");
+        // 자동으로 SQLiteOpenHelper.onCreate() 메서드를 호출한다
+        db = mOpenHelper.getWritableDatabase();
+        try {
+            mOpenHelper.getWritableDatabase().insert(DATABASE_NAME, "", values);
+//            mOpenHelper.getWritableDatabase().insertOrThrow(DATABASE_NAME, "", values);
+//            mOpenHelper.getWritableDatabase().insertWithOnConflict(DATABASE_NAME, DonutDB.DonutEntry._ID, values, SQLiteDatabase.CONFLICT_IGNORE);
 
-        List<String> reqValue = uri.getPathSegments();
-
-//        if(reqValue.size()>0) {
-//            String
-//        }
-
-        db = mOpenHelper.getWritableDatabase();    // 자동으로 SQLiteOpenHelper.onCreate() 메서드를 호출한다
-        return null;
+        }catch (SQLiteException e) {
+            Log.d(TAG, "data insert error = " + e);
+            return null;
+        }
+        return uri;
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        Uri mUri = null;
-        int id = 0;
-        if (sUriMatcher.match(uri) == 1) {
-            id = db.delete(DonutDB.DonutEntry._TABLE_NAME, selection, selectionArgs);
-            if (id > 0) {
-                mUri = ContentUris.withAppendedId(CONTENT_URI, id);
-                //ContentResolver 에게 바뀐 url를 알려줌
-                getContext().getContentResolver().notifyChange(mUri, null);
-
-            }else {
-                Toast.makeText(getContext(), "DB삭제 실패", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        return id;
+        return 0;
     }
 
     @Override

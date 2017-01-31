@@ -13,6 +13,7 @@ public final class DonutDB {
     private DonutDB() {}
 
     public static final class DonutEntry implements BaseColumns {
+        public static final String CONTENT_URI = "content://com.example.android.DONUTAPP";
         public static final String ID = "id";
         public static final String TYPE = "type";
         public static final String NAME = "name";

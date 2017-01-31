@@ -41,13 +41,13 @@ public class RaisedFragment extends Fragment {
 
 //        if (view instanceof RecyclerView) {
         Context context = view.getContext();
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.collection_list);
+        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.item_list);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(context);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new CakeAdapter(mCakeData);
+//        mAdapter = new CakeAdapter(mCakeData);
         mRecyclerView.setAdapter(mAdapter);
 //        }
         return view;

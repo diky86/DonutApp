@@ -1,56 +1,45 @@
 package com.example.android.donutapp;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 public class CakeFragment extends Fragment {
 
     protected static final String TAG = "CakeFragment";
+    private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<DonutsDao> mCakeData;
+    private Context mContext;
+    private Cursor mCursor;
+    private String mName;
 
-    public CakeFragment() {
-
-    }
+    public CakeFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        initDataSet();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        mCakeData = (ArrayList<DonutsDao>) getArguments().getSerializable("ArrayList");
-        Log.d(TAG, "test = " + mCakeData.get(0).id);
-
-        View view = inflater.inflate(R.layout.fragment_cake, container, false);
-
-//        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.collection_list);
-            mRecyclerView.setHasFixedSize(true);
-
-            mLayoutManager = new LinearLayoutManager(context);
-            mRecyclerView.setLayoutManager(mLayoutManager);
-
-            mAdapter = new CakeAdapter(mCakeData);
-            mRecyclerView.setAdapter(mAdapter);
-//        }
-        return view;
+        View root = inflater.inflate(R.layout.fragment_cake, container, false);
+        mContext = root.getContext();
+        mRecyclerView = (RecyclerView) root.findViewById(R.id.item_list);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(mContext);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mCursor = CakeList();
+        mAdapter = new CakeAdapter(mContext, mCursor);
+        mRecyclerView.setAdapter(mAdapter);
+        return root;
     }
 
     @Override
@@ -58,4 +47,27 @@ public class CakeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    public Cursor CakeList() {
+        String [] mProjection = {
+                DonutDB.DonutEntry._ID,
+                DonutDB.DonutEntry.ID,
+                DonutDB.DonutEntry.TYPE,
+                DonutDB.DonutEntry.NAME,
+                DonutDB.DonutEntry.PPU
+        };
+
+        String mSelectionClause = DonutDB.DonutEntry.NAME + " = ?";
+        String [] mSelectionArgs = {""};
+        mName = getArguments().getString("name");
+        mSelectionArgs[0] = mName;
+
+        mCursor = getActivity().getContentResolver().query(
+                MainActivity.CONTENT_URI,
+                mProjection,
+                mSelectionClause,
+                mSelectionArgs,
+                null
+        );
+        return mCursor;
+    }
 }
