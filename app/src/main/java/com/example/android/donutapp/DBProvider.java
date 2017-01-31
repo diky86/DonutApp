@@ -42,6 +42,7 @@ public class DBProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
             String sortOrder) {
+        db = mOpenHelper.getWritableDatabase();
         Cursor c = db.query(DATABASE_NAME, projection, selection, selectionArgs, null
         , null, sortOrder);
 
@@ -61,14 +62,17 @@ public class DBProvider extends ContentProvider {
         // 자동으로 SQLiteOpenHelper.onCreate() 메서드를 호출한다
         db = mOpenHelper.getWritableDatabase();
         try {
-            mOpenHelper.getWritableDatabase().insert(DATABASE_NAME, "", values);
+            db.insert(DATABASE_NAME, "", values);
 //            mOpenHelper.getWritableDatabase().insertOrThrow(DATABASE_NAME, "", values);
 //            mOpenHelper.getWritableDatabase().insertWithOnConflict(DATABASE_NAME, DonutDB.DonutEntry._ID, values, SQLiteDatabase.CONFLICT_IGNORE);
 
         }catch (SQLiteException e) {
             Log.d(TAG, "data insert error = " + e);
             return null;
+        } finally {
+            db.close();
         }
+
         return uri;
     }
 
@@ -81,5 +85,20 @@ public class DBProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
     }
+//    public Cursor getCursor(String id, Stiring [] mProjection,) {
+//
+//        Cursor mCursor;
+//
+//        mCursor = query(
+//                CONTENT_URI,
+//                mProjection,
+//                mSelectionClause,
+//                mSelectionArgs,
+//                null
+//        );
+//
+//        return true;
+//    }
+//
 
 }

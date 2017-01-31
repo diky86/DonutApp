@@ -1,6 +1,8 @@
 package com.example.android.donutapp;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -52,6 +55,14 @@ public class MainActivity extends AppCompatActivity
     private SharedPreferences.Editor editor;
     private Date mDate;
     private MyReceiver myReceiver;
+
+    //
+    private JsonObject mJsonObject;
+    private JsonArray mJsonArray;
+    private String [] mProjection = {
+            DonutDB.DonutEntry.ID,
+            DonutDB.DonutEntry.NAME
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,24 +240,51 @@ public class MainActivity extends AppCompatActivity
         return json;
     }
 
+    public boolean checkToData() {
+        String searchItem;
+        for (int i=0; i < mJsonArray.size(); i++) {
+            JsonObject obj = (JsonObject) mJsonArray.get(i);
+            searchItem = obj.get("id").getAsString();
+
+            String mSelectionClause = DonutDB.DonutEntry.ID + " = ?";
+            String [] mSelectionArgs = {""};
+            mSelectionArgs[0] = searchItem;
+            mDbOpenHelper = new DbOpenHelper(this);
+
+            mCursor = getContentResolver().query(
+                    CONTENT_URI,
+                    mProjection,
+                    mSelectionClause,
+                    mSelectionArgs,
+                    null
+            );
+            if (mCursor != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void jsonToJava(String json) {
-        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-        JsonArray jsonArray = jsonObject.getAsJsonArray("donut");
+        mJsonObject = new JsonParser().parse(json).getAsJsonObject();
+        mJsonArray = mJsonObject.getAsJsonArray("donut");
         ContentValues values = new ContentValues();
 
-        for(int i=0; i<jsonArray.size(); i++) {
-            JsonObject obj = (JsonObject) jsonArray.get(i);
+        boolean isTable = checkToData();
+
+        if (isTable) {
+            setTextView();
+            return;
+        }
+
+        for(int i=0; i<mJsonArray.size(); i++) {
+            JsonObject obj = (JsonObject) mJsonArray.get(i);
             values.put(DonutDB.DonutEntry.ID, obj.get("id").getAsString());
             values.put(DonutDB.DonutEntry.TYPE, obj.get("type").getAsString());
             values.put(DonutDB.DonutEntry.NAME, obj.get("name").getAsString());
             values.put(DonutDB.DonutEntry.PPU, obj.get("ppu").getAsString());
             mUri = getContentResolver().insert(CONTENT_URI, values);
         }
-
-        String [] mProjection = {
-                DonutDB.DonutEntry.ID,
-                DonutDB.DonutEntry.NAME
-        };
 
         mCursor = getContentResolver().query(
                 CONTENT_URI,
@@ -255,12 +293,6 @@ public class MainActivity extends AppCompatActivity
                 null,
                 null
         );
-//        if (mCursor != null && mCursor.moveToFirst()) {
-//            do {
-//                String id = mCursor.getString(mCursor.getColumnIndex("id"));
-//            }
-//            while (mCursor.moveToNext());
-//        }
         setTextView();
     }
 
@@ -268,13 +300,6 @@ public class MainActivity extends AppCompatActivity
         TextView textView1 = (TextView) findViewById(R.id.id_view);;
         TextView textView2 = (TextView) findViewById(R.id.id_view2);
         TextView textView3 = (TextView) findViewById(R.id.id_view3);
-//        textView1 = (TextView) findViewById(R.id.id_view);
-//        textView2 = (TextView) findViewById(R.id.id_view2);
-//        textView3 = (TextView) findViewById(R.id.id_view3);
-        String [] mProjection = {
-                DonutDB.DonutEntry.ID,
-                DonutDB.DonutEntry.NAME
-        };
 
         mCursor = getContentResolver().query(
                 CONTENT_URI,
@@ -331,21 +356,23 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.raised) {
 
-            fragment = new RaisedFragment();
-            item.setTitle(mStringArr.get(1).name);
-            //fragment에 전달할 bundle 선언
-//            Bundle bundle = new Bundle();
-            bundle.putSerializable("ArrayList", donutList);
+            fragment = new CakeFragment();
+            item.setTitle("Raised");
+            bundle.putString("name", mNameArr[1]);
             fragment.setArguments(bundle);
             title = "Raised";
 
         } else if (id == R.id.old_fashioned) {
 
-            fragment = new OldFashionedFragment();
-            item.setTitle(mStringArr.get(2).name);
-//            Bundle bundle = new Bundle();
-            bundle.putSerializable("ArrayList", donutList);
+            fragment = new CakeFragment();
+            item.setTitle("Old Fashioned");
+            bundle.putString("name", mNameArr[2]);
             fragment.setArguments(bundle);
+//            fragment = new OldFashionedFragment();
+//            item.setTitle(mStringArr.get(2).name);
+////            Bundle bundle = new Bundle();
+//            bundle.putSerializable("ArrayList", donutList);
+//            fragment.setArguments(bundle);
             title = "Old Fashioned";
         }
 
