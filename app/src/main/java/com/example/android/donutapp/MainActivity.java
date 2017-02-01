@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -166,7 +165,7 @@ public class MainActivity extends AppCompatActivity
                     mSelectionArgs,
                     null
             );
-            if (mCursor != null) {
+            if (mCursor.getCount() > 0) {
                 return true;
             }
         }
@@ -178,9 +177,7 @@ public class MainActivity extends AppCompatActivity
         mJsonArray = mJsonObject.getAsJsonArray("donut");
         ContentValues values = new ContentValues();
 
-        boolean isTable = checkToData();
-
-        if (isTable) {
+        if (checkToData()) {
             setTextView();
             return;
         }
@@ -193,14 +190,6 @@ public class MainActivity extends AppCompatActivity
             values.put(DonutDB.DonutEntry.PPU, obj.get("ppu").getAsString());
             mUri = getContentResolver().insert(CONTENT_URI, values);
         }
-
-        mCursor = getContentResolver().query(
-                CONTENT_URI,
-                mProjection,
-                null,
-                null,
-                null
-        );
         setTextView();
     }
 
@@ -216,7 +205,13 @@ public class MainActivity extends AppCompatActivity
                 null,
                 null
         );
+
+        if (mCursor == null) {
+            return;
+        }
+
         int arrSize = mCursor.getCount();
+        Log.d(TAG, "mCursor count = " + arrSize);
         String [] mIdArr = new String[arrSize];
         mNameArr = new String[arrSize];
         int index = 0;
