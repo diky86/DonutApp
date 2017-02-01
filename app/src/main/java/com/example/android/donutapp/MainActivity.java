@@ -1,8 +1,6 @@
 package com.example.android.donutapp;
 
-import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity
     private SQLiteDatabase mSQLiteDatabase;
     private DonutDB dDB;
     private DonutsDao donut;
-    private Fragment fragment;
+    private Fragment mFragment;
     private ArrayList<DonutsDao> donutList = new ArrayList<>();
     private ArrayList<DonutsDao> mStringArr = new ArrayList<>();
     private Uri mUri;
@@ -81,7 +78,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //Preference
         long time = getCurrentTime();
         sharedPref = getSharedPreferences("time", 0);
         editor = sharedPref.edit();
@@ -102,10 +98,8 @@ public class MainActivity extends AppCompatActivity
                         long end = System.currentTimeMillis();
                         String time = sdf.format(end - start);
                         long intTime = Long.parseLong(time);
-//                        Log.d(TAG, "intTime = " + intTime);
 
                         if (intTime == 10) {
-                            Log.d(TAG, "success");
                             setPreference();
                             start = System.currentTimeMillis();
                         }
@@ -147,24 +141,8 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
-    public boolean isTable() {
-        boolean isTable = false;
-        mCursor = mSQLiteDatabase.rawQuery("select * from donuts", null);
-        if ( mCursor != null && mCursor.moveToFirst()) {
-            isTable = true;
-        }
-        mCursor.close();
-        return isTable;
-    }
-
 //    //db 삽입
 //    public void insert() {
-//
-//        if(isTable()) {
-//            Toast.makeText(getApplicationContext(), "중복 삽입", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
 //
 //        //Table에 삽입되는 레코드 객체
 //        ContentValues values_donut = new ContentValues();
@@ -344,46 +322,33 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         String title = getString(R.string.app_name);
-        String name;
         Bundle bundle = new Bundle();
 
         if (id == R.id.cake) {
-            fragment = new CakeFragment();
+            mFragment = new CakeFragment();
             item.setTitle("Cake");
             bundle.putString("name", mNameArr[0]);
-            fragment.setArguments(bundle);
+            mFragment.setArguments(bundle);
             title = "Cake";
 
         } else if (id == R.id.raised) {
 
-            fragment = new CakeFragment();
+            mFragment = new CakeFragment();
             item.setTitle("Raised");
             bundle.putString("name", mNameArr[1]);
-            fragment.setArguments(bundle);
+            mFragment.setArguments(bundle);
             title = "Raised";
 
         } else if (id == R.id.old_fashioned) {
 
-            fragment = new CakeFragment();
+            mFragment = new CakeFragment();
             item.setTitle("Old Fashioned");
             bundle.putString("name", mNameArr[2]);
-            fragment.setArguments(bundle);
-//            fragment = new OldFashionedFragment();
-//            item.setTitle(mStringArr.get(2).name);
-////            Bundle bundle = new Bundle();
-//            bundle.putSerializable("ArrayList", donutList);
-//            fragment.setArguments(bundle);
+            mFragment.setArguments(bundle);
             title = "Old Fashioned";
         }
 
-        if (fragment != null) {
-            FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_fragment_layout);
-            frameLayout.removeAllViews();
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_fragment_layout, fragment);
-            ft.addToBackStack("null");
-            ft.commit();
-        }
+        setFragment(mFragment);
 
         // set the toolbar title
         if (getSupportActionBar() != null) {
@@ -393,5 +358,17 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void setFragment(Fragment fragment) {
+        if (fragment == null) {
+            return;
+        }
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_fragment_layout);
+        frameLayout.removeAllViews();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_fragment_layout, fragment);
+        ft.addToBackStack("null");
+        ft.commit();
     }
 }
