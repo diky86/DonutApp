@@ -2,27 +2,23 @@ package com.example.android.donutapp;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 /**
  * Created by leewoonho on 2017. 1. 21..
  */
 
-public class CakeAdapter extends RecyclerView.Adapter<CakeAdapter.ViewHolder> {
+public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
-    protected static final String TAG = "CakeAdapter";
+    protected static final String TAG = "ItemAdapter";
     private Context mContext;
     private Cursor mCursor;
 
-    public CakeAdapter(Context context, Cursor cursor) {
+    public ItemAdapter(Context context, Cursor cursor) {
         mContext = context;
         mCursor = cursor;
     }
@@ -31,7 +27,7 @@ public class CakeAdapter extends RecyclerView.Adapter<CakeAdapter.ViewHolder> {
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.donut_item, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_adapter, parent, false);
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }

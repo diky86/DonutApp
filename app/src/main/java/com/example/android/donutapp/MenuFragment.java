@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class CakeFragment extends Fragment {
+public class MenuFragment extends Fragment {
 
-    protected static final String TAG = "CakeFragment";
+    protected static final String TAG = "MenuFragment";
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -20,7 +20,7 @@ public class CakeFragment extends Fragment {
     private Cursor mCursor;
     private String mName;
 
-    public CakeFragment() {}
+    public MenuFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,14 +30,14 @@ public class CakeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_cake, container, false);
+        View root = inflater.inflate(R.layout.fragment_menu, container, false);
         mContext = root.getContext();
         mRecyclerView = (RecyclerView) root.findViewById(R.id.item_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mCursor = CakeList();
-        mAdapter = new CakeAdapter(mContext, mCursor);
+        mCursor = itemList();
+        mAdapter = new ItemAdapter(mContext, mCursor);
         mRecyclerView.setAdapter(mAdapter);
         return root;
     }
@@ -47,7 +47,7 @@ public class CakeFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    public Cursor CakeList() {
+    public Cursor itemList() {
         String [] mProjection = {
                 DonutDB.DonutEntry._ID,
                 DonutDB.DonutEntry.ID,

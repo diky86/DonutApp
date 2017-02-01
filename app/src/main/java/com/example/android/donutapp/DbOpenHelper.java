@@ -1,16 +1,9 @@
 package com.example.android.donutapp;
 
 import static com.example.android.donutapp.DonutDB.DonutEntry.DONUT_CREATE;
-
 import android.content.Context;
-import android.content.Loader;
-import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
-import android.util.Log;
-import android.widget.TabHost;
 
 /**
  * Created by leewoonho on 2017. 1. 18..
@@ -35,12 +28,10 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(DONUT_CREATE);
-        Log.d(TAG, "Donuts Table Create!!");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.d(TAG, "onUpgrade called");
         db.execSQL(DonutDB.DonutEntry._DELETE);
         onCreate(db);
     }

@@ -3,7 +3,6 @@ package com.example.android.donutapp;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -28,8 +27,6 @@ import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,22 +35,13 @@ public class MainActivity extends AppCompatActivity
     protected static final String AUTHORITY = "com.example.android.DONUTAPP";
     protected static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
     private static String json = null;
-    private DbOpenHelper mDbOpenHelper;
     private Cursor mCursor;
-    private SQLiteDatabase mSQLiteDatabase;
-    private DonutDB dDB;
-    private DonutsDao donut;
-    private Fragment mFragment;
-    private ArrayList<DonutsDao> donutList = new ArrayList<>();
-    private ArrayList<DonutsDao> mStringArr = new ArrayList<>();
+    private DbOpenHelper mDbOpenHelper;
     private Uri mUri;
+    private Fragment mFragment;
     private String [] mNameArr;
     private SharedPreferences sharedPref;
     private SharedPreferences.Editor editor;
-    private Date mDate;
-    private MyReceiver myReceiver;
-
-    //
     private JsonObject mJsonObject;
     private JsonArray mJsonArray;
     private String [] mProjection = {
@@ -140,64 +128,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
     }
-
-//    //db 삽입
-//    public void insert() {
-//
-//        //Table에 삽입되는 레코드 객체
-//        ContentValues values_donut = new ContentValues();
-//        ContentValues values_batter = new ContentValues();
-//        ContentValues values_topping = new ContentValues();
-//
-//        Log.d(TAG, " donutList.batter size = " + donutList.get(0).batters.batter.size());
-//        Log.d(TAG, " donutList.topping size = " + donutList.get(0).topping.size());
-//
-//        for (int i = 0 ; i < donutList.size() ; i++) {
-//            values_donut.put(DonutDB.DonutEntry.ID, donutList.get(i).id);
-//            values_donut.put(DonutDB.DonutEntry.TYPE, donutList.get(i).type);
-//            values_donut.put(DonutDB.DonutEntry.NAME, donutList.get(i).name);
-//            values_donut.put(DonutDB.DonutEntry.PPU, donutList.get(i).ppu);
-//
-//            mSQLiteDatabase.insert(DonutDB.DonutEntry._TABLE_NAME, null, values_donut);
-//        }
-//
-//        /*
-//        db 확인
-//         */
-//        mCursor = mSQLiteDatabase.rawQuery("select * from donuts", null);
-//        if ( mCursor != null && mCursor.moveToFirst()) {
-//            do {
-//                String b_id = mCursor.getString(mCursor.getColumnIndex("id"));
-//                String b_type = mCursor.getString(mCursor.getColumnIndex("type"));
-//                String d_id = mCursor.getString(mCursor.getColumnIndex("name"));
-//                Log.d(TAG, "b_id : " + b_id + "     " + b_type + "     " + d_id);
-//            }while (mCursor.moveToNext());
-//        }
-//
-//        mCursor.close();
-//    }
-
-//    //db에서 값
-//    private void dowhileCusor() {
-//        mCursor = null;
-//        mCursor = mSQLiteDatabase.rawQuery("select * from donuts", null);
-//        if (mCursor != null && mCursor.moveToFirst()) {
-//            do {
-//                donut = new DonutsDao(
-//                        mCursor.getString(mCursor.getColumnIndex("id")),
-//                        mCursor.getString(mCursor.getColumnIndex("name"))
-//                );
-//                mStringArr.add(donut);
-//            }while (mCursor.moveToNext());
-//
-//            // check input data
-//            for (DonutsDao d : mStringArr) {
-//                Log.i(TAG, "ID = " + d.id);
-//                Log.i(TAG, "NAME = " + d.name);
-//            }
-//        }
-//        mCursor.close();
-//    }
 
     /**
      assets에 있는 txt파일을 json형식으로 변환
@@ -325,7 +255,7 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
 
         if (id == R.id.cake) {
-            mFragment = new CakeFragment();
+            mFragment = new MenuFragment();
             item.setTitle("Cake");
             bundle.putString("name", mNameArr[0]);
             mFragment.setArguments(bundle);
@@ -333,7 +263,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.raised) {
 
-            mFragment = new CakeFragment();
+            mFragment = new MenuFragment();
             item.setTitle("Raised");
             bundle.putString("name", mNameArr[1]);
             mFragment.setArguments(bundle);
@@ -341,7 +271,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.old_fashioned) {
 
-            mFragment = new CakeFragment();
+            mFragment = new MenuFragment();
             item.setTitle("Old Fashioned");
             bundle.putString("name", mNameArr[2]);
             mFragment.setArguments(bundle);
@@ -350,7 +280,6 @@ public class MainActivity extends AppCompatActivity
 
         setFragment(mFragment);
 
-        // set the toolbar title
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }

@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
-        tools:mContext="com.example.android.donutapp.CakeFragment"
-        tools:listitem="@layout/donut_item"/>
+        tools:mContext="com.example.android.donutapp.MenuFragment"
+        tools:listitem="@layout/item_adapter"/>
 
 </RelativeLayout>
 
