@@ -59,20 +59,15 @@ public class DBProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         Log.d(TAG, "insert() was called");
-        // 자동으로 SQLiteOpenHelper.onCreate() 메서드를 호출한다
         db = mOpenHelper.getWritableDatabase();
         try {
             db.insert(DATABASE_NAME, "", values);
-//            mOpenHelper.getWritableDatabase().insertOrThrow(DATABASE_NAME, "", values);
-//            mOpenHelper.getWritableDatabase().insertWithOnConflict(DATABASE_NAME, DonutDB.DonutEntry._ID, values, SQLiteDatabase.CONFLICT_IGNORE);
-
         }catch (SQLiteException e) {
             Log.d(TAG, "data insert error = " + e);
             return null;
         } finally {
             db.close();
         }
-
         return uri;
     }
 
@@ -85,20 +80,5 @@ public class DBProvider extends ContentProvider {
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         return 0;
     }
-//    public Cursor getCursor(String id, Stiring [] mProjection,) {
-//
-//        Cursor mCursor;
-//
-//        mCursor = query(
-//                CONTENT_URI,
-//                mProjection,
-//                mSelectionClause,
-//                mSelectionArgs,
-//                null
-//        );
-//
-//        return true;
-//    }
-//
 
 }

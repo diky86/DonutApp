@@ -74,6 +74,9 @@ public class MainActivity extends AppCompatActivity
         loadJSONFromAsset();
     }
 
+    /**
+     * Time Check Tread
+     */
     long start = System.currentTimeMillis();
     Thread t = new Thread(new Runnable() {
         public void run() {
@@ -96,6 +99,9 @@ public class MainActivity extends AppCompatActivity
         }
     });
 
+    /**
+     * Preference에 current time 값 저장 및 갱신
+     */
     public void setPreference() {
         editor.remove("CurrentTime");
         editor.commit();
@@ -108,6 +114,10 @@ public class MainActivity extends AppCompatActivity
         Log.d(TAG, "Current Time = " + currentTime);
     }
 
+    /**
+     * 현재 시간 가져오는 메서드
+     * @return currentTime : long 타입 현재 시간
+     */
     public long getCurrentTime() {
         long now = System.currentTimeMillis();
         SimpleDateFormat dateFormat = new SimpleDateFormat("mmss");
@@ -127,7 +137,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     assets에 있는 txt파일을 json형식으로 변환
+     * assets에 있는 txt파일을 json형식으로 변환
      */
     public String loadJSONFromAsset() {
         try {
@@ -145,6 +155,10 @@ public class MainActivity extends AppCompatActivity
         return json;
     }
 
+    /**
+     * insert 전 데이터가 있는지 check
+     * @return 데이터 유무 boolean 값
+     */
     public boolean checkToData() {
         String searchItem;
         for (int i=0; i < mJsonArray.size(); i++) {
@@ -170,6 +184,9 @@ public class MainActivity extends AppCompatActivity
         return false;
     }
 
+    /**
+     * JSON을 Array로 직렬화
+     */
     public void jsonToJava(String json) {
         mJsonObject = new JsonParser().parse(json).getAsJsonObject();
         mJsonArray = mJsonObject.getAsJsonArray("donut");
@@ -191,6 +208,9 @@ public class MainActivity extends AppCompatActivity
         setTextView();
     }
 
+    /**
+     * ID, NAME 값을 TextView에 set
+     */
     public void setTextView() {
         TextView textView1 = (TextView) findViewById(R.id.id_view);;
         TextView textView2 = (TextView) findViewById(R.id.id_view2);
@@ -282,6 +302,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * Fragment로 전환
+     * @param fragment : sub 화면
+     */
     public void setFragment(Fragment fragment) {
         if (fragment == null) {
             return;

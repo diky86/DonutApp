@@ -8,8 +8,6 @@ import android.provider.BaseColumns;
 
 public final class DonutDB {
 
-    // To prevent someone from accidentally instantiating the contract class,
-    // make the constructor private.
     private DonutDB() {}
 
     public static final class DonutEntry implements BaseColumns {

@@ -52,6 +52,10 @@ public class MenuFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * recyclerview item list 가져오기
+     * @return mCursor : recyclerview 에 들어갈 item을 가리키는 cursor
+     */
     public Cursor itemList() {
         String [] mProjection = {
                 DonutDB.DonutEntry._ID,
