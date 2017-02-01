@@ -33,7 +33,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(DonutDB.DonutEntry._DELETE);
-        onCreate(db);
+        db.execSQL(DONUT_CREATE);
     }
 
 }

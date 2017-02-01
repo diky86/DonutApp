@@ -3,6 +3,7 @@ package com.example.android.donutapp;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,17 +30,21 @@ public class MenuFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View root = inflater.inflate(R.layout.fragment_menu, container, false);
-        mContext = root.getContext();
-        mRecyclerView = (RecyclerView) root.findViewById(R.id.item_list);
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mContext = view.getContext();
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.item_list);
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(mContext);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mCursor = itemList();
         mAdapter = new ItemAdapter(mContext, mCursor);
         mRecyclerView.setAdapter(mAdapter);
-        return root;
     }
 
     @Override

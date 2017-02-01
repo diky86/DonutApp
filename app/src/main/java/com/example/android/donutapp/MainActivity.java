@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -90,7 +89,6 @@ public class MainActivity extends AppCompatActivity
                             setPreference();
                             start = System.currentTimeMillis();
                         }
-
                     }
                 });
                 SystemClock.sleep(100);
